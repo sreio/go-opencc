@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        goos: [ linux, darwin, windows ]
-        goarch: [ amd64, arm64 ]
+        goos: [linux, darwin, windows]
+        goarch: [amd64, arm64]
     steps:
       - uses: actions/checkout@v3
 
@@ -32,31 +32,32 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create or Update Release
+        uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
           draft: false
           prerelease: false
-          allow_update: true
-
-      # 批量上传所有平台二进制
-      - name: Upload binaries (glob)
-        uses: alexellis/upload-assets@0.4.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload binaries
+        uses: softprops/action-gh-release@v1
         with:
-          asset_paths: '["bin/*/go-opencc"]'
+          files: bin/*/go-opencc
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   docker:
     needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -69,6 +70,6 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          platforms: linux/amd64,linux/arm64,darwin/amd64,windows/amd64
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: sreio/go-opencc:${{ github.ref_name }}
