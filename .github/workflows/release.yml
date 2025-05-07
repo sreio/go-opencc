@@ -28,40 +28,14 @@ jobs:
           go build -o bin/${{ matrix.goos }}_${{ matrix.goarch }}/go-opencc main.go
 
       - name: Upload binaries
-        uses: actions/upload-artifact@v4
-        with:
-          name: go-opencc-${{ matrix.goos }}-${{ matrix.goarch }}
-          path: bin/${{ matrix.goos }}_${{ matrix.goarch }}/go-opencc
-
-
-  release:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download binaries
-        uses: actions/download-artifact@v4
-        with:
-          name: go-opencc-binaries
-          path: bin/
-
-      - uses: actions/checkout@v3
-
-      - name: Create or Update Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ github.ref_name }}
-          name: Release ${{ github.ref_name }}
+          files: bin/*/go-opencc
           draft: false
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload binaries
-        uses: softprops/action-gh-release@v1
-        with:
-          files: bin/*/go-opencc
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   docker:
     needs: build
