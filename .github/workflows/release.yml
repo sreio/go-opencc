@@ -42,6 +42,7 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
+          allow_update: true
 
       # 批量上传所有平台二进制
       - name: Upload binaries (glob)
