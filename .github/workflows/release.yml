@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        goos: [linux, darwin, windows]
-        goarch: [amd64, arm64]
+        goos: [ linux, darwin, windows ]
+        goarch: [ amd64, arm64 ]
     steps:
       - uses: actions/checkout@v3
 
@@ -35,7 +35,8 @@ jobs:
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
-        env: { GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} }
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
@@ -45,7 +46,8 @@ jobs:
       # 批量上传所有平台二进制
       - name: Upload binaries (glob)
         uses: alexellis/upload-assets@0.4.1
-        env: { GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} }
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           asset_paths: '["bin/*/go-opencc"]'
 
