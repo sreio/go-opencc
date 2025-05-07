@@ -30,8 +30,8 @@ jobs:
       - name: Upload binaries
         uses: actions/upload-artifact@v4
         with:
-          name: go-opencc-binaries
-          path: bin/
+          name: go-opencc-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: bin/${{ matrix.goos }}_${{ matrix.goarch }}/go-opencc
 
 
   release:
