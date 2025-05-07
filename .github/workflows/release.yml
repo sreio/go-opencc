@@ -61,6 +61,6 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          platforms: linux/amd64,linux/arm64,darwin/amd64,darwin/arm64
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: sreio/go-opencc:${{ github.ref_name }}
