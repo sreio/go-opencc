@@ -22,23 +22,30 @@ jobs:
 
       - name: Build executable
         run: |
+          EXT=""
+          if [ "${{ matrix.goos }}" = "windows" ]; then
+            EXT=".exe"
+          fi
+
           GOOS=${{ matrix.goos }} \
           GOARCH=${{ matrix.goarch }} \
           CGO_ENABLED=0 \
-          go build -o bin/go-opencc_${{ matrix.goos }}_${{ matrix.goarch }} main.go
+          go build -o bin/go-opencc_${{ matrix.goos }}_${{ matrix.goarch }}${EXT} main.go
 
       - name: Upload new asset to existing release
         run: |
-          gh release upload ${{ github.ref_name }} bin/go-opencc_${{ matrix.goos }}_${{ matrix.goarch }} --clobber
+          gh release upload ${{ github.ref_name }} bin/go-opencc_${{ matrix.goos }}_${{ matrix.goarch }}* --clobber
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 
   docker:
     needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -49,11 +56,15 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push Docker image
+      - name: Build and push multi-platform image
         uses: docker/build-push-action@v4
         with:
           context: .
           file: ./Dockerfile
-          platforms: linux/amd64,linux/arm64
+          platforms: |
+            linux/amd64,linux/arm64,\
+            windows/amd64,windows/arm64,\
+            darwin/amd64,darwin/arm64
           push: true
-          tags: sreio/go-opencc:${{ github.ref_name }}
+          tags: |
+            sreio/go-opencc:${{ github.ref_name }}
