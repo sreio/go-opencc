@@ -27,10 +27,23 @@ jobs:
           CGO_ENABLED=0 \
           go build -o bin/${{ matrix.goos }}_${{ matrix.goarch }}/go-opencc main.go
 
+      - name: Upload binaries
+        uses: actions/upload-artifact@v3
+        with:
+          name: go-opencc-binaries
+          path: bin/
+
+
   release:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Download binaries
+        uses: actions/download-artifact@v3
+        with:
+          name: go-opencc-binaries
+          path: bin/
+
       - uses: actions/checkout@v3
 
       - name: Create or Update Release
