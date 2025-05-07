@@ -25,14 +25,11 @@ jobs:
           GOOS=${{ matrix.goos }} \
           GOARCH=${{ matrix.goarch }} \
           CGO_ENABLED=0 \
-          go build -o bin/${{ matrix.goos }}_${{ matrix.goarch }}/go-opencc main.go
+          go build -o bin/go-opencc_${{ matrix.goos }}_${{ matrix.goarch }} main.go
 
-      - name: Upload binaries
-        uses: softprops/action-gh-release@v1
-        with:
-          files: bin/*/go-opencc
-          draft: false
-          prerelease: false
+      - name: Upload new asset to existing release
+        run: |
+          gh release upload ${{ github.ref_name }} bin/go-opencc_${{ matrix.goos }}_${{ matrix.goarch }} --clobber
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
