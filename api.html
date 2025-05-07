@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>API 文档</title>
+  <!-- 引入 Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"> <!-- :contentReference[oaicite:0]{index=0} -->
+  <style>
+    /* 全局重置与基础设置 */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Inter', sans-serif; /* :contentReference[oaicite:1]{index=1} */
+      color: #333;
+      line-height: 1.6;
+      background: #f9fafb;
+      padding: 2rem;
+    }
+    /* 容器 */
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 2rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    /* 标题 */
+    h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 1rem;
+      border-bottom: 3px solid #e5e7eb;
+      padding-bottom: 0.5rem;
+    }
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #111827;
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+    }
+    /* 段落与列表 */
+    p, ul {
+      margin-bottom: 1rem;
+    }
+    ul {
+      padding-left: 1.25rem;
+    }
+    ul li {
+      margin-bottom: 0.5rem;
+    }
+    /* 分隔线 */
+    hr {
+      border: none;
+      border-top: 1px solid #e5e7eb;
+      margin: 2rem 0;
+    }
+    /* 代码块 */
+    pre {
+      background: #f3f4f6;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      overflow-x: auto;
+      margin-bottom: 1.5rem;
+      font-family: 'Source Code Pro', monospace;
+    }
+    code {
+      background: #f3f4f6;
+      padding: 0.2rem 0.4rem;
+      border-radius: 0.25rem;
+    }
+    /* 响应式 */
+    @media (max-width: 600px) {
+      body { padding: 1rem; }
+      .container { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2>API 文档</h2>
+  <p>下面列出了本服务提供的所有接口。</p>
+  <hr>
+
+  <h3>GET <code>/</code></h3>
+  <ul>
+    <li><strong>功能</strong>：返回首页（<code>index.html</code>）</li>
+  </ul>
+  <hr>
+
+  <h3>GET <code>/docs</code></h3>
+  <ul>
+    <li><strong>功能</strong>：返回文档地址</li>
+  </ul>
+  <hr>
+
+  <h3>GET <code>/ping</code></h3>
+  <ul>
+    <li><strong>功能</strong>：健康检查</li>
+  </ul>
+  <p><strong>返回示例</strong>：</p>
+  <pre><code>{
+  "message": "pong"
+}</code></pre>
+  <hr>
+
+  <h3>GET <code>/s2twp?text=…</code></h3>
+  <ul>
+    <li><strong>功能</strong>：将简体字转换为台湾正体（常用词汇）</li>
+    <li><strong>参数</strong>：
+      <ul>
+        <li><code>text</code>（string，必填）：要转换的文本</li>
+      </ul>
+    </li>
+  </ul>
+  <p><strong>返回示例</strong>：</p>
+  <pre><code>{
+  "text": "轉換後的繁體文字"
+}</code></pre>
+  <hr>
+
+  <h3>POST <code>/s2twp</code></h3>
+  <ul>
+    <li><strong>功能</strong>：将简体字转换为台湾正体（常用词汇）</li>
+    <li><strong>参数</strong>：
+      <ul>
+        <li><code>text</code>（string，必填）：要转换的文本</li>
+      </ul>
+    </li>
+  </ul>
+  <p><strong>返回示例</strong>：</p>
+  <pre><code>{
+  "text": "轉換後的繁體文字"
+}</code></pre>
+  <hr>
+
+  <h3>POST <code>/convert</code></h3>
+  <ul>
+    <li><strong>功能</strong>：根据 <code>type</code> 参数进行各种 OpenCC 转换</li>
+  </ul>
+  <p><strong>请求示例</strong>：</p>
+  <pre><code>{
+  "text": "要转换的文本",
+  "type": "s2t"  // 转换类型，参考 /types 接口
+}</code></pre>
+  <p><strong>返回示例</strong>：</p>
+  <pre><code>{
+  "text": "转换后的文本"
+}</code></pre>
+  <hr>
+
+  <h3>GET <code>/types</code></h3>
+  <ul>
+    <li><strong>功能</strong>：列出所有支持的转换类型及说明</li>
+  </ul>
+  <p><strong>返回示例</strong>：</p>
+  <pre><code>{
+  "list": {
+    "s2t":           "简转繁",
+    "t2s":           "繁转简",
+    "s2tw":          "简转繁(台湾繁体)",
+    "tw2s":          "繁(台湾繁体)转简",
+    "s2hk":          "简转繁(香港繁体)",
+    "hk2s":          "繁(香港繁体)转简",
+    "s2twp":         "简转繁(台湾标准-台湾常用词汇)",
+    "tw2sp":         "繁(香港繁体)转简(中国大陆常用词汇)",
+    "t2tw":          "繁转繁(台湾繁体)",
+    "t2hk":          "繁转繁(香港繁体)",
+    "t2jp":          "繁转繁(日文新字体)",
+    "jp2t":          "繁(日文新字体)转繁",
+    "tw2t":          "繁(台湾繁体)转繁",
+    "s2hk-finance":  "简转繁(香港繁体-金融)"
+  }
+}</code></pre>
+  <hr>
+</div>
+</body>
+</html>

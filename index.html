@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>简转繁(台湾常用字库)</title>
+  <!-- Import style -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-plus/dist/index.css"/>
+  <!-- Import Vue 3 -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@3"></script>
+  <!-- Import component library -->
+  <script src="https://cdn.jsdelivr.net/npm/element-plus"></script>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+    .container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+    .input-area {
+      width: 65%;
+      margin: 0 10px;
+    }
+    .button-area {
+      margin: 50px 0;
+    }
+  </style>
+</head>
+<body>
+<div id="app" class="container">
+  <div class="wrapper">
+    <!-- 左侧输入区域 -->
+    <el-input
+            type="textarea"
+            v-model="inputText"
+            placeholder="请输入内容"
+            rows="15"
+            class="input-area">
+    </el-input>
+
+    <!-- 转换按钮 -->
+    <div class="button-area">
+      <el-button type="primary" @click="convertText">转换</el-button>
+    </div>
+
+    <!-- 右侧显示区域，只读 -->
+    <el-input
+            type="textarea"
+            v-model="outputText"
+            placeholder="转换结果"
+            rows="15"
+            class="input-area"
+            :readonly="true">
+    </el-input>
+  </div>
+</div>
+
+<script>
+  const { createApp, ref } = Vue;
+  createApp({
+    setup() {
+      const inputText = ref('');
+      const outputText = ref('');
+
+      const convertText = async () => {
+        try {
+          const response = await fetch('/s2twp', {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ text: inputText.value })
+          });
+          if (response.ok) {
+            const data = await response.json();
+            outputText.value = data.text;
+          } else {
+            console.error('请求失败，状态码：', response.status);
+          }
+        } catch (error) {
+          console.error('发生错误:', error);
+        }
+      };
+
+      return {
+        inputText,
+        outputText,
+        convertText
+      };
+    }
+  }).use(ElementPlus).mount('#app');
+</script>
+</body>
+</html>
