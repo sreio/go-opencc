@@ -30,7 +30,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: app-linux-amd64
-          path: bin/linux_amd64/app
+          path: bin/linux_amd64/go-opencc
 
   docker:
     needs: build
